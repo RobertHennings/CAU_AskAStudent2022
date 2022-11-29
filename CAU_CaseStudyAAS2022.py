@@ -134,7 +134,7 @@ def main():
             
             print("Amount x of equilibrium: ", market.Size_Stock_D[market.Diff == min(market.Diff)].values[0])
             print("Amount y of equilibrium: ", market.PositionTotal_S[market.Diff == min(market.Diff)].values[0])
-            print("Final Stock Price of Market equilibrium: ",market.PositionTotal_S[market.Diff == min(market.Diff)].values[0] / market.Size_Stock_D[market.Diff == min(market.Diff)].values[0] )
+            print("Final Stock Price of Market equilibrium: ",market.PositionTotal_S[market.Diff == min(market.Diff)].values[0] / market.Size_Stock_D[market.Diff == min(market.Diff)].values[0])
             
             xvlines = market.Size_Stock_D[market.Diff == min(market.Diff)].values[0].astype("int")
             ymaxvlines = int(max(d.iloc[:,1].append(s.iloc[:,1])))
@@ -142,18 +142,34 @@ def main():
             yhlines = int(market.PositionTotal_S[market.Diff == min(market.Diff)].values[0]) #2582
             xmaxhlines = market.shape[0]
             
-            #Plot the market and the equilibrium
+            #Plot the market and the equilibrium, watch out: here it is not a Price-Quantity Plot but a Total Position-Quantity Plot
             plt.plot(d.Size_Stock, d.PositionTotal, label="Nachfrage DB", color="#9A1B7D")
             plt.plot(s.Size_Stock, s.PositionTotal, label="Angebot CB",color= "grey")
             plt.legend()
             plt.title("Marktgleichgewicht Porsche-Aktie", fontsize=14)
             plt.ylabel("Gesamtpositionsgröße in €")
             plt.xlabel("Anzahl Aktien")
-            plt.text(27,5000,"Amount x: "+str(market.Size_Stock_D[market.Diff == min(market.Diff)].values[0])+"\n"+"Amount y: "+str(market.PositionTotal_S[market.Diff == min(market.Diff)].values[0]),fontsize=8)
+            plt.text(market.Size_Stock_D[market.Diff == min(market.Diff)].values[0]+4,market.PositionTotal_S[market.Diff == min(market.Diff)].values[0]+50,"Amount x: "+str(market.Size_Stock_D[market.Diff == min(market.Diff)].values[0])+"\n"+"Amount y: "+str(market.PositionTotal_S[market.Diff == min(market.Diff)].values[0]),fontsize=8)
             plt.vlines(x=xvlines,ymin=0,ymax=ymaxvlines, color="black",linestyle="--")
             plt.hlines(y=yhlines,xmin=0,xmax=xmaxhlines, color="black",linestyle="--")
             plt.show()
-    
+            print("Market Equilibrium Plot has loaded - Total Position-Quantity")
+            
+            #Next we also want to plot the usual Price-Quantity Plot as we know it because we previously looked at the Total Position Size
+            #We just select the according columns in the market dataframe
+            plt.plot(market.Size_Stock_D[1:], market.Stock_Price_D[1:], label = "Nachfrage DB", color="#9A1B7D" )
+            plt.plot(market.Size_Stock_S[1:], market.Stock_Price_S[1:], label = "Angebot CB", color = "grey")
+            plt.title("Marktgleichgewicht Porsche-Aktie", fontsize=14)
+            plt.ylabel("Aktienpreis in € je Aktie")
+            plt.xlabel("Anzahl Aktien")
+            plt.vlines(x=market.Size_Stock_D[market.Diff == min(market.Diff)].values[0],ymin=0,ymax=int(max(market.Stock_Price_D[1:])-1), color="black",linestyle="--")
+            plt.hlines(y=int(market.PositionTotal_S[market.Diff == min(market.Diff)].values[0] / market.Size_Stock_D[market.Diff == min(market.Diff)].values[0]),xmin=0,xmax=max(market.Size_Stock_D[1:]), color="black",linestyle="--")
+            plt.text(market.Size_Stock_D[market.Diff == min(market.Diff)].values[0]+3,int(market.PositionTotal_S[market.Diff == min(market.Diff)].values[0] / market.Size_Stock_D[market.Diff == min(market.Diff)].values[0])+60,
+                     "Amount x: " + str(market.Size_Stock_D[market.Diff == min(market.Diff)].values[0])+"\n"+"Amount y: "+str(int(market.PositionTotal_S[market.Diff == min(market.Diff)].values[0] / market.Size_Stock_D[market.Diff == min(market.Diff)].values[0])), 
+                     fontsize = 8)
+            plt.show()
+            print("Market Equilibrium Plot has loaded - Stock Price-Quantity")
+            
     #to use the class we first have to initialize it
     Case = CaseStudyAAS(amount=51)
     DemandTable = Case.Demand_DB(m1=25,y1=3251.50,m2=50,y2=2837)  #provide the two points to estimate the linear euqation
