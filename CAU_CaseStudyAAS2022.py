@@ -172,8 +172,8 @@ def main():
             
     #to use the class we first have to initialize it
     Case = CaseStudyAAS(amount=51)
-    DemandTable = Case.Demand_DB(m1=25,y1=3251.50,m2=50,y2=2837)  #provide the two points to estimate the linear euqation
-    SupplyTable = Case.Supply_CB(m1=18,y1=1845,m2=28,y2=3073.84)    #provide the two points to estimate the linear euqation
+    globals()["DemandTable"] = Case.Demand_DB(m1=25,y1=3251.50,m2=50,y2=2837)  #provide the two points to estimate the linear euqation
+    globals()["SupplyTable"] = Case.Supply_CB(m1=18,y1=1845,m2=28,y2=3073.84)    #provide the two points to estimate the linear euqation
     #Find and plot the market equilibrium
     Case.FindMarketEquilibrium(Case.Demand_DB(m1=25,y1=3251.50,m2=50,y2=2837)  ,Case.Supply_CB(m1=18,y1=1845,m2=28,y2=3073.84))
     
